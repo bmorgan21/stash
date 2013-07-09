@@ -108,8 +108,11 @@ class LocationController extends BaseController
             url: req.body.url,
             website: req.body.website,
             vicinity: req.body.vicinity,
-            data: req.body.data
+            data: req.body.data,
+            photos: JSON.parse(req.body.photos)
             }
+
+        console.log(data.photos)
 
         default_id = '' + new mongoose.Types.ObjectId()
         models.Location.findOneAndUpdate({_id:req.params.id or default_id, user:req.user}, data, {upsert:true},
@@ -121,9 +124,6 @@ class LocationController extends BaseController
                 else
                     res.redirect("/location/view/#{obj.id}/")
                 )
-
-        #    tags: req.body.tags
-        #    photos: req.body.photos,
 
     delete: (req, res, next) =>
         models.Location.findOneAndRemove({_id:req.params.id, user:req.user}, (err, location) ->

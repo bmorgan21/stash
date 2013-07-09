@@ -49,6 +49,14 @@
   {% endif %}
 </ul>
 
+{% if location.photos and location.photos.length > 0 %}
+<div class="photos">
+{% for photo in location.photos %}
+<div class="img"><img class="img-polaroid img-rounded" src="{{ photo.url }}"/></div>
+{% endfor %}
+</div>
+{% endif %}
+
 <div id="map-canvas" class="map"></div>
 
 {% endblock %}

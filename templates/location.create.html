@@ -50,7 +50,7 @@
     <div class="control-group">
         <label class="control-label">Information:</label>
         <div class="controls error">
-            <textarea class="input-block-level" name="data" placeholder="i.e. Special Information to Store with this Location"></textarea>
+            <textarea class="input-block-level" rows="4" name="data" placeholder="i.e. Special Information to Store with this Location"></textarea>
             <span class="help-inline" style="display:none;"></span>
         </div>
     </div>
@@ -109,13 +109,16 @@ function initialize() {
             item = JSON.parse(json_item);
 
             service.getDetails({reference:item.reference}, function(place, status) {
-              var values = {}
-              values['address'] = place.formatted_address
-              values['phone_number'] = place.formatted_phone_number
-              values['lat'] = place.geometry.location.lat()
-              values['lng'] = place.geometry.location.lng()
-              values['viewport'] = place.geometry.viewport
-              $form.values($.extend(values, place));
+              var values = {};
+              values['address'] = place.formatted_address;
+              values['phone_number'] = place.formatted_phone_number;
+              values['lat'] = place.geometry.location.lat();
+              values['lng'] = place.geometry.location.lng();
+              values['viewport'] = place.geometry.viewport;
+              values['photos'] = _.map(place.photos, function(photo) {
+                return {width:photo.width, height:photo.height, url:photo.getUrl({maxWidth:250})}
+              });
+              $form.values($.extend({}, place, values));
 
               place_changed(map, marker, $form.values());
               $name_field.focus().select();

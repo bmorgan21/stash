@@ -18,8 +18,10 @@ $.fn.values = function(data) {
             if (this.name && this.name in data) {
                 if(this.type == "checkbox" || this.type == "radio") {
                     $(this).prop("checked", (data[this.name] == $(this).val()));
-                } else {
+                } else if ('object' != typeof data[this.name] || data[this.name] == null) {
                     $(this).val(data[this.name]);
+                } else {
+                    $(this).val(JSON.stringify(data[this.name]));
                 }
             } else if (this.type == "checkbox") {
                 $(this).prop("checked", false);
