@@ -19,6 +19,7 @@
     "passport": "*",
     "passport-google": "*",
     "underscore": "*",
-    "humanize": "*"
+    "humanize": "*",
+    "markdown": "*"
   }
 }

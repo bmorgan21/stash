@@ -21,7 +21,8 @@ schema = Schema({
     website: String,
     tags:[Schema.Types.Mixed]
     vicinity: String,
-    viewport: Schema.Types.Mixed
+    viewport: Schema.Types.Mixed,
+    data: String
     })
 
 schema.index({

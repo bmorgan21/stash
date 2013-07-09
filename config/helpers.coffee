@@ -1,4 +1,5 @@
 humanize = require('humanize')
+markdown = require( "markdown" ).markdown
 
 exports.JSON = {
     stringify: (obj) ->
@@ -8,3 +9,4 @@ exports.JSON = {
         return result
     }
 exports.humanize = humanize
+exports.markdown = markdown

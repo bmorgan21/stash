@@ -15,6 +15,7 @@ exports.configure = (app) ->
     app.get('/', lc.index)
     app.get('/location/all/', requiresAuth(), lc.all)
     app.get('/location/search/', requiresAuth(), lc.search)
+    app.get('/location/view/:id/', requiresAuth(), lc.view)
     app.get('/location/edit/:id/', requiresAuth(), lc.form)
     app.post('/location/edit/:id/', requiresAuth(), lc.save_update)
     app.get('/location/create/', requiresAuth(), lc.form)

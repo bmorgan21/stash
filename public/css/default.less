@@ -25,13 +25,29 @@ body {
 }
 
 #locations .nav li {
+    a {
+        padding-left:5px;
+    }
     .distance {
          color:black;
+         font-size:12px;
     }
 
-    img.icon {
-        max-height:15px;
-        max-width:15px;
+    span.img {
+        text-align:center;
+        vertical-align:middle;
+        display:table-cell;
+        img.icon {
+            max-height:25px;
+        }
+        height:40px;
+        width:50px;
+    }
+    span.details {
+        padding-left:5px;
+        display:table-cell;
+        height:40px;
+        vertical-align:middle;
     }
 }
 
@@ -146,4 +162,27 @@ body {
     bottom: auto;
     left: auto;
   }
+}
+
+.location-view {
+    .jumbotron {
+        img {
+            float:left;
+        }
+        h1 {
+            padding-left:10px;
+            display:table-cell;
+            vertical-align:middle;
+            height:71px;
+        }
+    }
+
+    .edit.btn {
+        float:right;
+        margin-left:15px;
+    }
+
+    .information {
+        padding:0 15px;
+    }
 }

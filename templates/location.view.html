@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block body_class %}location-view{% endblock %}
+
+{% block styles %}
+<style type="text/css">
+#map-canvas {
+  height: 200px;
+}
+
+#map-canvas img {
+  max-width:inherit !important;
+}
+
+</style>
+{% endblock %}
+
+{% block header %}
+<img src="{{ location.icon }}"/> <h1> {{ location.name }}</h1>
+{% endblock %}
+
+{% block body %}
+<a class="edit btn btn-small btn-primary" href="/location/edit/{{ location.id }}/">Edit</a>
+<address>
+    {{ location.address }}
+</address>
+
+<ul class="unstyled">
+  {% if location.phone_number %}
+  <li><strong>Phone: </strong>{{ location.phone_number }}</li>
+  {% endif %}
+  {% if location.website %}
+  <li><strong>Website: </strong><a href="{{ location.website }}">{{ location.website }}</a></li>
+  {% endif %}
+  {% if location.loc %}
+  <li><strong>Map: </strong>
+      {% if coords %}
+      <a href="http://maps.google.com/maps?saddr={{ coords.lat }},{{ coords.lng }}&daddr={{ location.coords.lat }},{{ location.coords.lng }}&hl=en" target="_blank">Directions From Here</a> {% if distance %}( {{ distance.toFixed(2) }} mi ){% endif %}
+      {% else %}
+      <a href="http://maps.google.com/maps?saddr=current+location&daddr={{ location.coords.lat }},{{ location.coords.lng }}&hl=en" target="_blank">Directions</a>
+      {% endif %}
+  </li>
+  {% endif %}
+  {% if location.data %}
+  <li><strong>Information: </strong>
+      <div class="information">{{ helpers.markdown.toHTML(location.data) }}</div>
+  </li>
+  {% endif %}
+</ul>
+
+<div id="map-canvas" class="map"></div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+
+    <script>
+function initialize() {
+  var mapOptions = {
+    zoom: 14,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+
+  var map = new google.maps.Map($('#map-canvas')[0], mapOptions);
+  google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
+      // do something only the first time the map is loaded
+    var data = {}
+    data.lat = {{ location.coords.lat }};
+    data.lng = {{ location.coords.lng }};
+    {% if location.viewport %}data.viewport = {{ helpers.JSON.stringify(location.viewport) }};{% endif %}
+    data.icon = {{ helpers.JSON.stringify(location.icon) }};
+
+    place_changed(map, marker, data);
+  });
+  var service = new google.maps.places.PlacesService(map);
+
+  var marker = new google.maps.Marker({
+    map: map
+  });
+
+  map.setCenter(new google.maps.LatLng(60, 105));
+}
+
+function place_changed(map, marker, vars) {
+    if (!(vars.lat || vars.lng)) return
+
+    var location = new google.maps.LatLng(vars.lat, vars.lng);
+
+    // If the place has a geometry, then present it on a map.
+    if (false && vars.viewport) {
+      map.fitBounds(vars.viewport);
+    } else {
+      map.setCenter(location);
+      map.setZoom(17);  // Why 17? Because it looks good.
+    }
+    marker.setIcon(/** @type {google.maps.Icon} */({
+      url: vars.icon,
+      size: new google.maps.Size(71, 71),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(17, 34),
+      scaledSize: new google.maps.Size(35, 35)
+    }));
+    marker.setPosition(location);
+    marker.setVisible(true);
+}
+
+(function($) {
+  initialize()
+})(jQuery);
+
+    </script>
+{% endblock %}

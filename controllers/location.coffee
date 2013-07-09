@@ -24,6 +24,10 @@ class LocationController extends BaseController
                     locations = _.filter(locations, (el) ->
                         return el.distance < 25
                     )
+
+                    locations = _.sortBy(locations, (el) ->
+                        return el.distance
+                    )
                 cb(err, locations)
             )
 
@@ -42,6 +46,18 @@ class LocationController extends BaseController
                     next(err)
                 else
                     res.render('index.html', {locations:locations})
+            )
+    view: (req, res, next) =>
+        models.Location.findById(req.params.id, (err, location) ->
+            if (err)
+                next(err)
+            else
+                coords = if req.cookies.coords then JSON.parse(req.cookies.coords) else null
+                res.render('location.view.html', {
+                    location:location,
+                    coords:coords,
+                    distance: if coords then lib.distance.getDistanceAsMiles(coords, location.coords) else null
+                })
             )
 
     all: (req, res, next) =>
@@ -91,7 +107,8 @@ class LocationController extends BaseController
             types: req.body.types,
             url: req.body.url,
             website: req.body.website,
-            vicinity: req.body.vicinity
+            vicinity: req.body.vicinity,
+            data: req.body.data
             }
 
         default_id = '' + new mongoose.Types.ObjectId()
@@ -102,7 +119,7 @@ class LocationController extends BaseController
                     errors = {address: (''+err).replace(/'/g, '"')}
                     res.render('location.create.html', {vars:vars, errors:errors, exists:req.params.id})
                 else
-                    res.redirect("/location/edit/#{obj.id}/")
+                    res.redirect("/location/view/#{obj.id}/")
                 )
 
         #    tags: req.body.tags
