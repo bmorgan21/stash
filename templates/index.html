@@ -1,13 +1,11 @@
 {% extends 'base.html' %}
 {% import 'locations.html' as locs %}
 
+{% block header %}
+<h1>Near Here</h1>
+{% endblock %}
+
 {% block body %}
-<div class="page-header">
-    <div class="btn-group pull-right">
-        <a class="btn btn-primary" href="/location/create/">Create</a>
-    </div>
-    <h1>My Locations Near Here</h1>
-</div>
 <div id="locations">
     <div class="progress progress-striped active">
         <div class="bar" style="width: 100%;">Locating...</div>

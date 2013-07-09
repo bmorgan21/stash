@@ -73,7 +73,7 @@ class LocationController extends BaseController
                     vars = location.toObject()
                     vars.lng = vars.loc[0]
                     vars.lat = vars.loc[1]
-                res.render('location.create.html', {vars: vars})
+                res.render('location.create.html', {vars: vars, exists:req.params.id})
             )
 
     save_update: (req, res, next) =>
@@ -100,7 +100,7 @@ class LocationController extends BaseController
                 if (err)
                     vars = req.body
                     errors = {address: (''+err).replace(/'/g, '"')}
-                    res.render('location.create.html', {vars:vars, errors:errors})
+                    res.render('location.create.html', {vars:vars, errors:errors, exists:req.params.id})
                 else
                     res.redirect("/location/edit/#{obj.id}/")
                 )

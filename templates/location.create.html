@@ -3,7 +3,7 @@
 {% block styles %}
 <style type="text/css">
 #map-canvas {
-  height: 300px;
+  height: 200px;
 }
 
 #map-canvas img {
@@ -11,6 +11,10 @@
 }
 
 </style>
+{% endblock %}
+
+{% block header %}
+<h1>{% if exists %}Edit{% else %}Create{% endif %} Location</h1>
 {% endblock %}
 
 {% block body %}
@@ -30,36 +34,23 @@
     <input type="hidden" name="vicinity"/>
     <input type="hidden" name="viewport"/>
     <div class="control-group">
-        <label class="control-label">Name:</label>
+        <label class="control-label">Location:</label>
         <div class="controls">
-            <div class="input-prepend">
-                <span class="add-on"><i class="icon-home"></i></span>
-                <input id="nameField" autocomplete="off" class="span5" name="name" type="text" placeholder="i.e. Home">
-            </div>
-            <div class="form-element">
-                <span class="help-inline"></span>
-            </div>
+            <input id="addressField" autocomplete="off" class="input-block-level" name="address" type="text" placeholder="i.e. 23 Hardy Rd, Londonderry, NH">
+            <span class="help-inline" style="display:none;"></span>
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">Address:</label>
+        <label class="control-label">Name:</label>
         <div class="controls error">
-            <div class="input-prepend">
-                <span class="add-on"><i class="icon-map-marker"></i></span>
-                <input id="addressField" class="span5" name="address" type="text" placeholder="i.e. 23 Hardy Rd, Londonderry, NH">
-            </div>
-            <div class="form-element">
-                <span class="help-inline"></span>
-            </div>
+            <input id="nameField" class="input-block-level" name="name" type="text" placeholder="i.e. Home">
+            <span class="help-inline" style="display:none;"></span>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">Tags:</label>
         <div class="controls error">
-            <div class="input-prepend">
-                <span class="add-on"><i class="icon-tag"></i></span>
-                <input type="text" class="span2" name="tag"></input>
-            </div>
+            <input type="text" class="input-block-level" name="tag"></input>
             <select class="span2" name="tag_type">
                 <option value="text">Text</option>
                 <option value="url">Url</option>
@@ -94,7 +85,7 @@ function initialize() {
   var map = new google.maps.Map($('#map-canvas')[0], mapOptions);
   google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
       // do something only the first time the map is loaded
-    place_changed(map, marker, infowindow, $form.values());
+    place_changed(map, marker, $form.values());
   });
   var service = new google.maps.places.PlacesService(map);
 
@@ -135,13 +126,14 @@ function initialize() {
               values['viewport'] = place.geometry.viewport
               $form.values($.extend(values, place));
 
-              place_changed(map, marker, infowindow, $form.values());
+              place_changed(map, marker, $form.values());
+              $name_field.focus().select();
             })
 
             return item['selection'];
     }
   }
-  $name_field.typeahead(options);
+  $address_field.typeahead(options);
 
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
@@ -169,7 +161,7 @@ function handleNoGeolocation(infowindow, map, errorFlag) {
   map.setCenter(new google.maps.LatLng(60, 105));
 }
 
-function place_changed(map, marker, infowindow, vars) {
+function place_changed(map, marker, vars) {
     if (!(vars.lat || vars.lng)) return
 
     var location = new google.maps.LatLng(vars.lat, vars.lng);
@@ -190,9 +182,6 @@ function place_changed(map, marker, infowindow, vars) {
     }));
     marker.setPosition(location);
     marker.setVisible(true);
-
-    infowindow.setContent('<div><strong>' + vars.name + '</strong><br>' + vars.vicinity);
-    infowindow.open(map, marker);
 }
 
 (function($) {

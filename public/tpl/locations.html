@@ -2,7 +2,7 @@
 <ul class="nav nav-tabs nav-stacked">
     {% if locations and locations.length > 0 %}
     {% for location in locations %}
-    <li><a href="/location/edit/{{ location.id }}/">{% if location.distance %}<i class="muted">{{ location.distance.toFixed(2) }} mi</i> {% endif %}{{ location.name }} <small class="muted">{{ location.address }}</small></a></li>
+    <li><a href="/location/edit/{{ location.id }}/"><img class="icon" src="{{ location.icon }}"/> {{ location.name }} <small class="muted">{{ location.address }}</small>{% if location.distance %} <i class="distance"">{{ location.distance.toFixed(2) }} mi</i>{% endif %}</a></li>
     {% endfor %}
     {% else %}
     <b><i>No locations</i></b> <a href="/location/create/">create one</a>

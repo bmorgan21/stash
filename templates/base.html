@@ -52,6 +52,11 @@
             </div>
         </div>
 
+        <header class="jumbotron">
+            <div class="container">
+                {% block header %}{% endblock %}
+            </div>
+        </header>
 
         {% set flashes = flash() %}
 

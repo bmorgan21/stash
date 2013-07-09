@@ -1,13 +1,11 @@
 {% extends 'base.html' %}
 {% import 'locations.html' as locs %}
 
+{% block header %}
+<h1>All My Locations</h1>
+{% endblock %}
+
 {% block body %}
-<div class="page-header">
-    <div class="btn-group pull-right">
-        <a class="btn btn-primary" href="/location/create/">Create</a>
-    </div>
-    <h1>All My Locations</h1>
-</div>
 <div id="locations">
     {{ locs.render(locations, true) }}
 </div>
