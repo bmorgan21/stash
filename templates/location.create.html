@@ -34,7 +34,7 @@
     <input type="hidden" name="vicinity"/>
     <input type="hidden" name="viewport"/>
     <div class="control-group">
-        <label class="control-label">Location:</label>
+        <label class="control-label">Location: <span class="map-link" style="display:none;">(<a href="#" target="_blank">map</a>)</span></label>
         <div class="controls">
             <input id="addressField" autocomplete="off" class="input-block-level" name="address" type="text" placeholder="i.e. 23 Hardy Rd, Londonderry, NH">
             <span class="help-inline" style="display:none;"></span>
@@ -85,7 +85,7 @@ function initialize() {
   var map = new google.maps.Map($('#map-canvas')[0], mapOptions);
   google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
       // do something only the first time the map is loaded
-    place_changed(map, marker, $form.values());
+    place_changed(map, marker, $map_link, $form.values());
   });
   var service = new google.maps.places.PlacesService(map);
 
@@ -94,6 +94,7 @@ function initialize() {
     map: map
   });
 
+  var $map_link = $('.map-link')
   var $name_field = $('#nameField');
   var $form = $name_field.closest('form');
   var $address_field = $('#addressField');
@@ -126,7 +127,7 @@ function initialize() {
               values['viewport'] = place.geometry.viewport
               $form.values($.extend(values, place));
 
-              place_changed(map, marker, $form.values());
+              place_changed(map, marker, $map_link, $form.values());
               $name_field.focus().select();
             })
 
@@ -161,7 +162,7 @@ function handleNoGeolocation(infowindow, map, errorFlag) {
   map.setCenter(new google.maps.LatLng(60, 105));
 }
 
-function place_changed(map, marker, vars) {
+function place_changed(map, marker, $map_link, vars) {
     if (!(vars.lat || vars.lng)) return
 
     var location = new google.maps.LatLng(vars.lat, vars.lng);
@@ -182,6 +183,9 @@ function place_changed(map, marker, vars) {
     }));
     marker.setPosition(location);
     marker.setVisible(true);
+
+    $map_link.find('a').attr('href', "http://maps.google.com/maps?saddr=current+location&daddr=" + vars.lat + "," + vars.lng + "&hl=en");
+    $map_link.show()
 }
 
 (function($) {
