@@ -31,7 +31,7 @@
   <li><strong>Phone: </strong>{{ location.phone_number }}</li>
   {% endif %}
   {% if location.website %}
-  <li><strong>Website: </strong><a href="{{ location.website }}">{{ location.website|truncate(35) }}</a></li>
+  <li><strong>Website: </strong><a href="{{ location.website }}" target="_blank">{{ location.website|truncate(35) }}</a></li>
   {% endif %}
   {% if location.loc %}
   <li><strong>Map: </strong>
