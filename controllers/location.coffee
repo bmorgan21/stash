@@ -48,7 +48,7 @@ class LocationController extends BaseController
                     res.render('index.html', {locations:locations})
             )
     view: (req, res, next) =>
-        models.Location.findById(req.params.id, (err, location) ->
+        models.Location.findOne({_id:req.params.id, user:req.user}, (err, location) ->
             if (err)
                 next(err)
             else
@@ -80,7 +80,7 @@ class LocationController extends BaseController
         )
 
     form: (req, res, next) =>
-        models.Location.findById(req.params.id, (err, location) ->
+        models.Location.findOne({_id:req.params.id, user:req.user}, (err, location) ->
             if (err)
                 next(err)
             else
@@ -112,7 +112,7 @@ class LocationController extends BaseController
             }
 
         default_id = '' + new mongoose.Types.ObjectId()
-        models.Location.findByIdAndUpdate(req.params.id or default_id, data, {upsert:true},
+        models.Location.findOneAndUpdate({_id:req.params.id or default_id, user:req.user}, data, {upsert:true},
             (err, obj) ->
                 if (err)
                     vars = req.body
@@ -124,5 +124,13 @@ class LocationController extends BaseController
 
         #    tags: req.body.tags
         #    photos: req.body.photos,
+
+    delete: (req, res, next) =>
+        models.Location.findOneAndRemove({_id:req.params.id, user:req.user}, (err, location) ->
+            if (err)
+                next(err)
+            else
+                res.redirect("/")
+            )
 
 exports.controller = new LocationController()

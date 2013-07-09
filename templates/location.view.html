@@ -20,6 +20,7 @@
 {% endblock %}
 
 {% block body %}
+<a class="delete btn btn-small btn-danger" onclick="return confirm('Are you sure you want to permanently remove this location?')" href="/location/delete/{{ location.id }}/">Delete</a>
 <a class="edit btn btn-small btn-primary" href="/location/edit/{{ location.id }}/">Edit</a>
 <address>
     {{ location.address }}
@@ -30,7 +31,7 @@
   <li><strong>Phone: </strong>{{ location.phone_number }}</li>
   {% endif %}
   {% if location.website %}
-  <li><strong>Website: </strong><a href="{{ location.website }}">{{ location.website }}</a></li>
+  <li><strong>Website: </strong><a href="{{ location.website }}">{{ location.website|truncate(35) }}</a></li>
   {% endif %}
   {% if location.loc %}
   <li><strong>Map: </strong>

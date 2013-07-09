@@ -20,6 +20,7 @@ exports.configure = (app) ->
     app.post('/location/edit/:id/', requiresAuth(), lc.save_update)
     app.get('/location/create/', requiresAuth(), lc.form)
     app.post('/location/create/', requiresAuth(), lc.save_update)
+    app.get('/location/delete/:id/', requiresAuth(), lc.delete)
 
     # Redirect the user to Google for authentication.  When complete, Google
     # will redirect the user back to the application at
