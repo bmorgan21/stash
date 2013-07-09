@@ -20,6 +20,10 @@ class LocationController extends BaseController
                         obj.distance = lib.distance.getDistanceAsMiles({lat:lat, lng:lng}, el.coords)
                         return obj
                     )
+
+                    locations = _.filter(locations, (el) ->
+                        return el.distance < 25
+                    )
                 cb(err, locations)
             )
 
@@ -56,9 +60,6 @@ class LocationController extends BaseController
             if (err)
                 next(err)
             else
-                locations = _.filter(locations, (el) ->
-                    return el.distance < 25
-                )
                 res.json(locations)
         )
 
