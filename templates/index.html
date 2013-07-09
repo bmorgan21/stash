@@ -19,25 +19,13 @@
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
 <script>
 (function($) {
-		if(geo_position_js.init()){
-			geo_position_js.getCurrentPosition(success_callback,error_callback,{enableHighAccuracy:true});
-		}
-		else{
+		if(geo_position_js.init()) {
+			geo_position_js.getCurrentPosition(success_callback,error_callback,{enableHighAccuracy:false});
+		} else {
 			alert("Functionality not available");
 		}
 
-		function success_callback(p)
-		{
-			alert('lat='+p.coords.latitude.toFixed(2)+';lon='+p.coords.longitude.toFixed(2));
-		}
-
-		function error_callback(p)
-		{
-			alert('error='+p.message);
-		}
-
-  if(navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
+		function success_callback(position) {
       var pos = new google.maps.LatLng(position.coords.latitude,
                                        position.coords.longitude);
 
@@ -45,13 +33,12 @@
       $.get('/location/search/?lat=' + position.coords.latitude + '&lng=' + position.coords.longitude, function(data, textStatus, jqXHR) {
         $('#locations').html(X.macro('render', data['content'], 'locations.html'))
       });
-    }, function() {
-      alert('unable to locate you');
-    }, {timeout:5*1000, enableHighAccuracy:false});
-  } else {
-    // Browser doesn't support Geolocation
-    alert('your browser does not support locations');
-  }
+		}
+
+		function error_callback(p)
+		{
+			alert('error='+p.message);
+		}
 })(jQuery);
 </script>
 {% endif %}
