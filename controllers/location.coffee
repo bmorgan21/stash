@@ -40,6 +40,14 @@ class LocationController extends BaseController
                     res.render('index.html', {locations:locations})
             )
 
+    all: (req, res, next) =>
+        models.Location.find({user:req.user}, (err, locations) ->
+            if (err)
+                next(err)
+            else
+                res.render('location.all.html', {locations:locations})
+        )
+
     search: (req, res, next) =>
         lat = parseFloat(req.query.lat)
         lng = parseFloat(req.query.lng)

@@ -1,4 +1,4 @@
-{% macro render(locations) %}
+{% macro render(locations, hide_all) %}
 <ul class="nav nav-tabs nav-stacked">
     {% if locations and locations.length > 0 %}
     {% for location in locations %}
@@ -8,7 +8,9 @@
     <b><i>No locations</i></b> <a href="/location/create/">create one</a>
     {% endif %}
 </ul>
+{% if not hide_all %}
 <center>
-    <a href="/">View All</a>
+    <a href="/location/all/">View All</a>
 </center>
+{% endif %}
 {% endmacro %}
