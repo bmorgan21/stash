@@ -32,7 +32,7 @@
       });
     }, function() {
       alert('unable to locate you');
-    });
+    }, {timeout:5*1000, enableHighAccuracy:false});
   } else {
     // Browser doesn't support Geolocation
     alert('your browser does not support locations');
