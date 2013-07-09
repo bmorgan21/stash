@@ -16,6 +16,9 @@ passport.deserializeUser((id, done) ->
 )
 
 exports.configure = (app, skin) ->
+    app.set('port', process.env.PORT || 3000)
+    hostname = 'localhost:' + app.get('port')
+
     # our custom "verbose errors" setting
     # which we can use in the templates
     # via settings['verbose errors']
@@ -25,8 +28,8 @@ exports.configure = (app, skin) ->
     # use $ NODE_ENV=production node examples/error-pages
     if ('production' == app.settings.env)
         app.disable('verbose errors')
+        hostname = 'stash.openmile.com'
 
-    app.set('port', process.env.PORT || 3000)
     app.use(express.responseTime())
     app.use(express.favicon(path.join(skin, 'public/img/favicon.ico')))
     app.use(express.logger('dev'))
@@ -36,8 +39,8 @@ exports.configure = (app, skin) ->
     app.use(passport.initialize())
     app.use(passport.session())
     passport.use(new GoogleStrategy({
-        returnURL: 'http://localhost:3000/auth/callback/',
-        realm: 'http://localhost:3000/'
+        returnURL: "http://#{hostname}/auth/callback/",
+        realm: "http://#{hostname}/"
       },
       (identifier, profile, done) ->
         models.User.findOneAndUpdate({open_id: identifier},
