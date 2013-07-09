@@ -17,6 +17,7 @@
 {% endblock %}
 
 {% block scripts %}
+{% if user %}
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
 <script>
 (function($) {
@@ -37,6 +38,6 @@
     alert('your browser does not support locations');
   }
 })(jQuery);
-
 </script>
+{% endif %}
 {% endblock %}
