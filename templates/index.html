@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% import 'locations.html' as locs %}
+
+{% block body %}
+<div class="page-header">
+    <div class="btn-group pull-right">
+        <a class="btn btn-primary" href="/location/create/">Create</a>
+    </div>
+    <h1>My Locations</h1>
+</div>
+<div id="locations">
+    <div class="progress progress-striped active">
+        <div class="bar" style="width: 100%;">Locating...</div>
+    </div>
+    {{ locs.render(locations) }}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+<script>
+(function($) {
+  if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var pos = new google.maps.LatLng(position.coords.latitude,
+                                       position.coords.longitude);
+
+      $.cookie('coords', JSON.stringify({lat:position.coords.latitude, lng:position.coords.longitude}))
+      $.get('/location/search/?lat=' + position.coords.latitude + '&lng=' + position.coords.longitude, function(data, textStatus, jqXHR) {
+        $('#locations').html(X.macro('render', data['content'], 'locations.html'))
+      });
+    }, function() {
+      alert('unable to locate you');
+    });
+  } else {
+    // Browser doesn't support Geolocation
+    alert('your browser does not support locations');
+  }
+})(jQuery);
+
+</script>
+{% endblock %}
