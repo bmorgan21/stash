@@ -29,6 +29,8 @@ schema.index({
     user: 1
     })
 
+schema.index({user:1, name:1}, {unique:true})
+
 schema.virtual("coords")
     .get(() ->
         return {
