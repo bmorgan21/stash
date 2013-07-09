@@ -19,6 +19,23 @@
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
 <script>
 (function($) {
+		if(geo_position_js.init()){
+			geo_position_js.getCurrentPosition(success_callback,error_callback,{enableHighAccuracy:true});
+		}
+		else{
+			alert("Functionality not available");
+		}
+
+		function success_callback(p)
+		{
+			alert('lat='+p.coords.latitude.toFixed(2)+';lon='+p.coords.longitude.toFixed(2));
+		}
+
+		function error_callback(p)
+		{
+			alert('error='+p.message);
+		}
+
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       var pos = new google.maps.LatLng(position.coords.latitude,
