@@ -66,11 +66,11 @@ X.getCurrentPosition = (success_cb, error_cb, options) ->
 
     if (coords.valid)
         handle_success(coords, success_cb)
-    else if (geo_position_js.init())
-        geo_position_js.getCurrentPosition(((position) ->
+    else if (navigator.geolocation)
+        navigator.geolocation.getCurrentPosition(((position) ->
             coords = position.coords
             handle_success({lat:coords.latitude, lng:coords.longitude, timestamp:new Date().toJSON()}, success_cb)
-            ), error_cb, {enableHighAccuracy:false})
+            ), error_cb)
     else
         alert('Functionality not available')
 
