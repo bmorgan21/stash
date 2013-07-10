@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block header %}
-<img src="{{ location.icon }}"/> <h1> {{ location.name }}</h1>
+<img src="{{ location.cat_icon }}"/> <h1> {{ location.name }}</h1>
 {% endblock %}
 
 {% block body %}
@@ -85,7 +85,7 @@ function initialize() {
     data.lat = {{ location.coords.lat }};
     data.lng = {{ location.coords.lng }};
     {% if location.viewport %}data.viewport = {{ helpers.JSON.stringify(location.viewport) }};{% endif %}
-    data.icon = {{ helpers.JSON.stringify(location.icon) }};
+    data.cat_icon = {{ helpers.JSON.stringify(location.cat_icon) }};
 
     place_changed(map, marker, data);
   });
@@ -110,7 +110,7 @@ function place_changed(map, marker, vars) {
       map.setZoom(17);  // Why 17? Because it looks good.
     }
     marker.setIcon(/** @type {google.maps.Icon} */({
-      url: vars.icon,
+      url: vars.cat_icon,
       size: new google.maps.Size(71, 71),
       origin: new google.maps.Point(0, 0),
       anchor: new google.maps.Point(17, 34),

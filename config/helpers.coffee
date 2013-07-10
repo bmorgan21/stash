@@ -1,5 +1,6 @@
 humanize = require('humanize')
 markdown = require( "markdown" ).markdown
+lib = require('../lib')
 
 exports.JSON = {
     stringify: (obj) ->
@@ -10,3 +11,4 @@ exports.JSON = {
     }
 exports.humanize = humanize
 exports.markdown = markdown
+exports.icons = lib.icons

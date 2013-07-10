@@ -11,9 +11,9 @@ class LocationController extends BaseController
     icon_filters: (locations) ->
         result = {}
         _.each(locations, (location) ->
-            if (not result[location.icon])
-                result[location.icon] = 0
-            result[location.icon]++
+            if (not result[location.cat_icon])
+                result[location.cat_icon] = 0
+            result[location.cat_icon]++
         )
 
         return _.sortBy(_.map(result, (val, key) ->
@@ -116,6 +116,7 @@ class LocationController extends BaseController
             international_phone_number: req.body.international_phone_number,
             loc: [req.body.lng, req.body.lat],
             icon: req.body.icon,
+            cat_icon: req.body.cat_icon,
             price_level: req.body.price_level,
             rating: req.body.rating,
             types: JSON.parse(req.body.types),
@@ -125,8 +126,6 @@ class LocationController extends BaseController
             data: req.body.data,
             photos: JSON.parse(req.body.photos)
             }
-
-        console.log(data.photos)
 
         default_id = '' + new mongoose.Types.ObjectId()
         models.Location.findOneAndUpdate({_id:req.params.id or default_id, user:req.user}, data, {upsert:true},

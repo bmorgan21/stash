@@ -13,6 +13,7 @@ schema = Schema({
         type: [Number]
         },
     icon: String,
+    cat_icon: String,
     photos: [Schema.Types.Mixed]
     price_level: {type:Number, max:4, min:0},
     rating: Number,
