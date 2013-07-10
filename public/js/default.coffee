@@ -55,7 +55,7 @@ X.flash = (flashes) ->
         Behavior2.contentChanged('flash')
 
 X.getCurrentPosition = (success_cb, error_cb, options) ->
-    coords = JSON.parse($.cookie('coords'))
+    coords = JSON.parse($.cookie('coords') or '{}')
     window.coords = coords
     if (coords.lat and  coords.lng and coords.timestamp)
         coords.valid = (new Date() - new Date(coords.timestamp)) < 1 * 60 * 1000 # cache for a minute
