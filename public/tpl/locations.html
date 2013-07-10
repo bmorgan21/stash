@@ -2,7 +2,7 @@
 <ul class="nav nav-tabs nav-stacked">
     {% if locations and locations.length > 0 %}
     {% for location in locations %}
-    <li class="clearfix"><a href="/location/view/{{ location.id }}/"><span class="img"><img class="icon" src="{{ location.icon }}"/>{% if location.distance %} <br/><span class="distance"">{{ location.distance.toFixed(2) }} mi</span>{% endif %}</span><span class="details">{{ location.name }} <br/><small class="muted">{{ location.address }}</small>{% if location.data %} <i class="icon-info-sign"></i>{% endif %}</a></span></li>
+    <li class="clearfix"><a href="/location/view/{{ location.id }}/"><span class="img"><img class="icon" src="{{ location.icon }}"/>{% if location.distance %} <br/><span class="distance"">{{ location.distance.toFixed(2) }} mi</span>{% endif %}</span><span class="details">{{ location.name }} <br/><small class="muted">{{ location.address }}</small> {% if location.data %}<i class="icon-info-sign"></i>{% endif %}{% if location.photos and location.photos.length > 0 %}<i class="icon-picture"></i>{% endif %}</a></span></li>
     {% endfor %}
     {% else %}
     <b><i>No locations</i></b> <a href="/location/create/">create one</a>
