@@ -66,93 +66,74 @@
 {% block scripts %}
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
 
-    <script>
+<script>
 function initialize() {
-  var mapOptions = {
-    zoom: 14,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
+    var mapOptions = {
+        zoom: 14,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
 
-  var map = new google.maps.Map($('#map-canvas')[0], mapOptions);
-  google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
-      // do something only the first time the map is loaded
-    place_changed(map, marker, $form.values());
-  });
-  var service = new google.maps.places.PlacesService(map);
+    var map = new google.maps.Map($('#map-canvas')[0], mapOptions);
+    google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
+        // do something only the first time the map is loaded
+        place_changed(map, marker, $form.values());
+    });
+    var service = new google.maps.places.PlacesService(map);
 
-  var infowindow = new google.maps.InfoWindow();
-  var marker = new google.maps.Marker({
-    map: map
-  });
+    var infowindow = new google.maps.InfoWindow();
+    var marker = new google.maps.Marker({
+        map: map
+    });
 
-  var $name_field = $('#nameField');
-  var $form = $name_field.closest('form');
-  var $address_field = $('#addressField');
-  var options = {
-    source:function(query, callback) {
-      var request = {
-        bounds: map.getBounds(),
-        query: query
-      };
+    var $name_field = $('#nameField');
+    var $form = $name_field.closest('form');
+    var $address_field = $('#addressField');
+    var options = {
+        source:function(query, callback) {
+            var request = {
+                bounds: map.getBounds(),
+                query: query
+            };
 
-      service.textSearch(request, function(places, status) {
-        window.places = places;
-        window.status = status;
+            service.textSearch(request, function(places, status) {
+                window.places = places;
+                window.status = status;
 
-        callback($.merge([{'id':null, 'name':query, 'selection':query, formatted_address:''}], $(places).map(function(i, el) {
-          return {'id': el.id, 'name': el['name'] + ' - ' + el.formatted_address, 'selection': el['name'] || el.formatted_address, 
-                  reference: el.reference};
-        })));
-      });
-    },
-    updater: function(json_item) {
+                callback($.merge([{'id':null, 'name':query, 'selection':query, formatted_address:''}], $(places).map(function(i, el) {
+                    return {'id': el.id, 'name': el['name'] + ' - ' + el.formatted_address, 'selection': el['name'] || el.formatted_address, 
+                            reference: el.reference};
+                })));
+            });
+        },
+        updater: function(json_item) {
             item = JSON.parse(json_item);
 
             service.getDetails({reference:item.reference}, function(place, status) {
-              var values = {};
-              values['address'] = place.formatted_address;
-              values['phone_number'] = place.formatted_phone_number;
-              values['lat'] = place.geometry.location.lat();
-              values['lng'] = place.geometry.location.lng();
-              values['viewport'] = place.geometry.viewport;
-              values['photos'] = _.map(place.photos, function(photo) {
-                return {width:photo.width, height:photo.height, url:photo.getUrl({maxWidth:250})}
-              });
-              $form.values($.extend({}, place, values));
+                var values = {};
+                values['address'] = place.formatted_address;
+                values['phone_number'] = place.formatted_phone_number;
+                values['lat'] = place.geometry.location.lat();
+                values['lng'] = place.geometry.location.lng();
+                values['viewport'] = place.geometry.viewport;
+                values['photos'] = _.map(place.photos, function(photo) {
+                    return {width:photo.width, height:photo.height, url:photo.getUrl({maxWidth:250})}
+                });
+                $form.values($.extend({}, place, values));
 
-              place_changed(map, marker, $form.values());
-              $name_field.focus().select();
+                place_changed(map, marker, $form.values());
+                $name_field.focus().select();
             })
 
             return item['selection'];
+        }
     }
-  }
-  $address_field.typeahead(options);
+    $address_field.typeahead(options);
 
-  if(navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var pos = new google.maps.LatLng(position.coords.latitude,
-                                       position.coords.longitude);
-
-      map.setCenter(pos);
-    }, function() {
-      handleNoGeolocation(infowindow, map, true);
-    });
-  } else {
-    // Browser doesn't support Geolocation
-    handleNoGeolocation(infowindow, map, false);
-  }
-}
-
-function handleNoGeolocation(infowindow, map, errorFlag) {
-  if (errorFlag) {
-    var content = 'Error: The Geolocation service failed.';
-  } else {
-    var content = 'Error: Your browser doesn\'t support geolocation.';
-  }
-
-  infowindow.setContent(content);
-  map.setCenter(new google.maps.LatLng(60, 105));
+    X.getCurrentPosition(function(position) {
+            map.setCenter(position);
+        }, function(position) {
+            alert('error='+p.message);
+        }, {enableHighAccuracy:false});
 }
 
 function place_changed(map, marker, vars) {
@@ -162,25 +143,24 @@ function place_changed(map, marker, vars) {
 
     // If the place has a geometry, then present it on a map.
     if (false && vars.viewport) {
-      map.fitBounds(vars.viewport);
+        map.fitBounds(vars.viewport);
     } else {
-      map.setCenter(location);
-      map.setZoom(17);  // Why 17? Because it looks good.
+        map.setCenter(location);
+        map.setZoom(17);  // Why 17? Because it looks good.
     }
     marker.setIcon(/** @type {google.maps.Icon} */({
-      url: vars.icon,
-      size: new google.maps.Size(71, 71),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(17, 34),
-      scaledSize: new google.maps.Size(35, 35)
+        url: vars.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(35, 35)
     }));
     marker.setPosition(location);
     marker.setVisible(true);
 }
 
 (function($) {
-  initialize()
+    initialize()
 })(jQuery);
-
-    </script>
+</script>
 {% endblock %}

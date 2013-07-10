@@ -104,7 +104,7 @@ class LocationController extends BaseController
             icon: req.body.icon,
             price_level: req.body.price_level,
             rating: req.body.rating,
-            types: req.body.types,
+            types: JSON.parse(req.body.types),
             url: req.body.url,
             website: req.body.website,
             vicinity: req.body.vicinity,

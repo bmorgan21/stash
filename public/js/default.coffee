@@ -54,6 +54,25 @@ X.flash = (flashes) ->
         $cont.append(X.macro('flash', deduped))
         Behavior2.contentChanged('flash')
 
+X.getCurrentPosition = (success_cb, error_cb, options) ->
+    coords = JSON.parse($.cookie('coords'))
+    window.coords = coords
+    if (coords.lat and  coords.lng and coords.timestamp)
+        coords.valid = (new Date() - new Date(coords.timestamp)) < 1 * 60 * 1000 # cache for a minute
+
+    handle_success = (coords, success_cb) ->
+        $.cookie('coords', JSON.stringify(coords))
+        success_cb(new google.maps.LatLng(coords.lat, coords.lng))
+
+    if (coords.valid)
+        handle_success(coords, success_cb)
+    else if (geo_position_js.init())
+        geo_position_js.getCurrentPosition(((position) ->
+            coords = position.coords
+            handle_success({lat:coords.latitude, lng:coords.longitude, timestamp:new Date().toJSON()}, success_cb)
+            ), error_cb, {enableHighAccuracy:false})
+    else
+        alert('Functionality not available')
 
 Behavior2.Class('flash', 'body div.flash-container .alert', ($ctx, that) ->
     setTimeout(() ->

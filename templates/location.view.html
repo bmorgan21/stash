@@ -42,6 +42,13 @@
       {% endif %}
   </li>
   {% endif %}
+  {% if location.types %}
+  <li><strong>Types: </strong>
+      {% for type in location.types %}
+      {{ type }}{% if not loop.last %},{% endif %}
+      {% endfor %}
+  </li>
+  {% endif %}
   {% if location.data %}
   <li><strong>Information: </strong>
       <div class="information">{{ helpers.markdown.toHTML(location.data) }}</div>

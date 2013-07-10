@@ -16,3 +16,4 @@ node_modules
 compiled
 diff.txt
 .DS_Store
+tmp
