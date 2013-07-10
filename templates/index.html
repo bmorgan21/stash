@@ -10,7 +10,7 @@
     <div class="progress progress-striped active">
         <div class="bar" style="width: 100%;">Locating...</div>
     </div>
-    {{ locs.render(locations) }}
+    {{ locs.render(icon_filters, locations) }}
 </div>
 {% endblock %}
 
@@ -21,7 +21,8 @@
 (function($) {
     X.getCurrentPosition(function(position) {
             $.get('/location/search/?lat=' + position.lat() + '&lng=' + position.lng(), function(data, textStatus, jqXHR) {
-                $('#locations').html(X.macro('render', data['content'], 'locations.html'))
+                $('#locations').html(X.macro('render', data['content'], 'locations.html'));
+                Behavior2.contentChanged();
             });
         }, function(position) {
             alert('error='+p.message);

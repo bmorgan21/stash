@@ -8,6 +8,20 @@ models = require('../models')
 lib = require('../lib')
 
 class LocationController extends BaseController
+    icon_filters: (locations) ->
+        result = {}
+        _.each(locations, (location) ->
+            if (not result[location.icon])
+                result[location.icon] = 0
+            result[location.icon]++
+        )
+
+        return _.sortBy(_.map(result, (val, key) ->
+            return [val, key]
+        ), (el) ->
+            return -el[0]
+        )
+
     do_search: (coords, user, cb) =>
         lng = coords.lng
         lat = coords.lat
@@ -34,18 +48,18 @@ class LocationController extends BaseController
     index: (req, res, next) =>
         if (req.cookies.coords)
             coords = JSON.parse(req.cookies.coords)
-            @do_search(coords, req.user, (err, locations) ->
+            @do_search(coords, req.user, (err, locations) =>
                 if (err)
                     next(err)
                 else
-                    res.render('index.html', {locations:locations})
+                    res.render('index.html', {locations:locations, icon_filters:@icon_filters(locations)})
             )
         else
-            models.Location.find({user:req.user}, (err, locations) ->
+            models.Location.find({user:req.user}, (err, locations) =>
                 if (err)
                     next(err)
                 else
-                    res.render('index.html', {locations:locations})
+                    res.render('index.html', {locations:locations, icon_filters:@icon_filters(locations)})
             )
     view: (req, res, next) =>
         models.Location.findOne({_id:req.params.id, user:req.user}, (err, location) ->
@@ -61,22 +75,22 @@ class LocationController extends BaseController
             )
 
     all: (req, res, next) =>
-        models.Location.find({user:req.user}, (err, locations) ->
+        models.Location.find({user:req.user}, (err, locations) =>
             if (err)
                 next(err)
             else
-                res.render('location.all.html', {locations:locations})
+                res.render('location.all.html', {locations:locations, icon_filters:@icon_filters(locations)})
         )
 
     search: (req, res, next) =>
         lat = parseFloat(req.query.lat)
         lng = parseFloat(req.query.lng)
 
-        @do_search({lat:lat, lng:lng}, req.user, (err, locations) ->
+        @do_search({lat:lat, lng:lng}, req.user, (err, locations) =>
             if (err)
                 next(err)
             else
-                res.json(locations)
+                res.json([@icon_filters(locations), locations])
         )
 
     form: (req, res, next) =>

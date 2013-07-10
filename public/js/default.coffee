@@ -8,7 +8,7 @@ X.render = (tpl, ctx={}) -> #render a nunjucks template by name. ctx is the obje
     return tpl.render(ctx)
 
 X.macro = (name, ctx={}, tpl='macros.html') -> #render a nunjucks macro by name.
-    return nunjucks.env.getTemplate(tpl).getExported()[name](ctx)
+    return nunjucks.env.getTemplate(tpl).getExported()[name](ctx...)
 
 
 $(() ->
@@ -100,6 +100,38 @@ Behavior2.Class('formfill', 'form', ($ctx, that) ->
 Behavior2.Class('loginrequired', '.login-required', ($ctx, that) ->
     $('#login-modal').modal()
 )
+
+Behavior2.Class('filters', '#locations .filters', {
+    click: {
+        'a.filter': 'toggle_filter'
+    }},
+    (($ctx, that) ->
+        $locations = $ctx.closest('#locations')
+        $ul = $locations.find('ul.nav')
+        $lis = $locations.find('ul.nav li')
+
+        that.toggle_filter = (evt) ->
+            $filter = $(evt.target).closest('.filter')
+            is_active = $filter.hasClass('active')
+
+            $ctx.find('.filter').removeClass('active')
+            $ctx.find('.filter .cnt').removeClass('badge badge-info')
+
+            if (not is_active)
+                $filter.addClass('active')
+                $filter.find('.cnt').addClass('badge badge-info')
+
+            # remove what is there
+            $ul.find('li').remove()
+
+            filter_icon = $filter.find('.icon').attr('src')
+            _.each($lis, (li) ->
+                if (is_active or $(li).find('.icon').attr('src') == filter_icon)
+                    $ul.append(li)
+            )
+    )
+)
+
 
 $.fn.typeahead.defaults['matcher'] = (item) ->
     return true
