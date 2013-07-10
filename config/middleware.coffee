@@ -81,8 +81,6 @@ exports.configure = (app, skin) ->
         next()
     )
 
-    app.use('/slow', express.timeout(1))  # per section timeouts!
-    app.use(app.router)
     app.use('/static', require('less-middleware')({
         src: path.join(skin, 'public'),
         dest: path.join(skin, 'compiled')
@@ -94,6 +92,9 @@ exports.configure = (app, skin) ->
 
     app.use('/static', express.static(path.join(skin, 'public')))
     app.use('/static', express.static(path.join(skin, 'compiled')))
+
+    app.use('/slow', express.timeout(1))  # per section timeouts!
+    app.use(app.router)
 
     app.use((req, res, next) ->
         res.status(404)

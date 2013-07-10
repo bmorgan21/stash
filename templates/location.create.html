@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block header %}
-<h1>{% if exists %}Edit{% else %}Create{% endif %} Location</h1>
+<h1>{{ 'Edit' if exists else 'Create' }} Location</h1>
 {% endblock %}
 
 {% block body %}
@@ -106,7 +106,7 @@ function initialize() {
             });
         },
         updater: function(json_item) {
-            item = JSON.parse(json_item);
+            var item = JSON.parse(json_item);
 
             service.getDetails({reference:item.reference}, function(place, status) {
                 var values = {};
@@ -122,11 +122,11 @@ function initialize() {
 
                 place_changed(map, marker, $form.values());
                 $name_field.focus().select();
-            })
+            });
 
             return item['selection'];
         }
-    }
+    };
     $address_field.typeahead(options);
 
     X.getCurrentPosition(function(position) {

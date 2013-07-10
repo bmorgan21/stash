@@ -2,7 +2,7 @@ process.on('uncaughtException', (err) ->
     console.error(err.stack)
     process.exit()
 )
-
+require('coffee-script')
 express = require('express')
 middleware = require('./config/middleware')
 routing = require('./config/routing')
