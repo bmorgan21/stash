@@ -107,36 +107,44 @@ class LocationController extends BaseController
             )
 
     save_update: (req, res, next) =>
-        data = {
-            user: req.user,
-            reference: req.body.reference,
-            name: req.body.name,
-            address: req.body.address,
-            phone_number: req.body.phone_number,
-            international_phone_number: req.body.international_phone_number,
-            loc: [req.body.lng, req.body.lat],
-            icon: req.body.icon,
-            cat_icon: req.body.cat_icon,
-            price_level: req.body.price_level,
-            rating: req.body.rating,
-            types: JSON.parse(req.body.types),
-            url: req.body.url,
-            website: req.body.website,
-            vicinity: req.body.vicinity,
-            data: req.body.data,
-            photos: JSON.parse(req.body.photos)
-            }
+        errors = {}
+        if (not req.body.lng or not req.body.lat)
+            errors['address'] = 'ERROR: Unable to geocode address'
 
-        default_id = '' + new mongoose.Types.ObjectId()
-        models.Location.findOneAndUpdate({_id:req.params.id or default_id, user:req.user}, data, {upsert:true},
-            (err, obj) ->
-                if (err)
-                    vars = req.body
-                    errors = {address: (''+err).replace(/'/g, '"')}
-                    res.render('location.create.html', {vars:vars, errors:errors, exists:req.params.id})
-                else
-                    res.redirect("/location/view/#{obj.id}/")
-                )
+        if (Object.keys(errors).length > 0)
+            vars = req.body
+            res.render('location.create.html', {vars:vars, errors:errors, exists:req.params.id})
+        else
+            data = {
+                user: req.user,
+                reference: req.body.reference,
+                name: req.body.name,
+                address: req.body.address,
+                phone_number: req.body.phone_number,
+                international_phone_number: req.body.international_phone_number,
+                loc: [req.body.lng, req.body.lat],
+                icon: req.body.icon,
+                cat_icon: req.body.cat_icon,
+                price_level: req.body.price_level,
+                rating: req.body.rating,
+                types: if req.body.types then JSON.parse(req.body.types) else [],
+                url: req.body.url,
+                website: req.body.website,
+                vicinity: req.body.vicinity,
+                data: req.body.data,
+                photos: if req.body.photos then JSON.parse(req.body.photos) else []
+                }
+
+            default_id = '' + new mongoose.Types.ObjectId()
+            models.Location.findOneAndUpdate({_id:req.params.id or default_id, user:req.user}, data, {upsert:true},
+                (err, obj) ->
+                    if (err)
+                        vars = req.body
+                        errors = {address: (''+err).replace(/'/g, '"')}
+                        res.render('location.create.html', {vars:vars, errors:errors, exists:req.params.id})
+                    else
+                        res.redirect("/location/view/#{obj.id}/")
+                    )
 
     delete: (req, res, next) =>
         models.Location.findOneAndRemove({_id:req.params.id, user:req.user}, (err, location) ->

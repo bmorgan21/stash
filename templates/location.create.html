@@ -110,10 +110,10 @@ function initialize() {
                 window.places = places;
                 window.status = status;
 
-                callback($.merge([{'id':null, 'name':query, 'selection':query, formatted_address:''}], $(places).map(function(i, el) {
+                callback($(places).map(function(i, el) {
                     return {'id': el.id, 'icon': el['icon'], 'name': el['name'] + ' - ' + el.formatted_address, 'selection': el['name'] || el.formatted_address, 
                             reference: el.reference};
-                })));
+                }));
             });
         },
         updater: function(json_item) {
@@ -130,6 +130,7 @@ function initialize() {
                 values['photos'] = _.map(place.photos, function(photo) {
                     return {width:photo.width, height:photo.height, url:photo.getUrl({maxWidth:250})}
                 });
+                $form[0].reset();
                 $form.values($.extend({}, place, values));
 
                 place_changed(map, marker, $form.values());

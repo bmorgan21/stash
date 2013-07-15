@@ -9,7 +9,7 @@ schema = Schema({
     phone_number: String,
     international_phone_number:String,
     loc: {
-        index: {type:'2d', sparse:true},
+        index: {type:'2d'},
         type: [Number]
         },
     icon: String,
