@@ -42,15 +42,26 @@
     </div>
     <div class="control-group">
         <label class="control-label">Name:</label>
-        <div class="controls error">
+        <div class="controls">
             <input id="nameField" class="input-block-level" name="name" type="text" placeholder="i.e. Home">
             <span class="help-inline" style="display:none;"></span>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">Information:</label>
-        <div class="controls error">
+        <div class="controls">
             <textarea class="input-block-level" rows="4" name="data" placeholder="i.e. Special Information to Store with this Location"></textarea>
+            <span class="help-inline" style="display:none;"></span>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Category:</label>
+        <div class="controls">
+            <select class="input-block-level" name="cat_icon">
+                {% for icon in helpers.icons.list %}
+                <option value="{{ icon[1] }}">{{ icon[0] }}</option>
+                {% endfor %}
+            </select>
             <span class="help-inline" style="display:none;"></span>
         </div>
     </div>
@@ -99,10 +110,10 @@ function initialize() {
                 window.places = places;
                 window.status = status;
 
-                callback($.merge([{'id':null, 'name':query, 'selection':query, formatted_address:''}], $(places).map(function(i, el) {
-                    return {'id': el.id, 'name': el['name'] + ' - ' + el.formatted_address, 'selection': el['name'] || el.formatted_address, 
+                callback($(places).map(function(i, el) {
+                    return {'id': el.id, 'icon': el['icon'], 'name': el['name'] + ' - ' + el.formatted_address, 'selection': el['name'] || el.formatted_address, 
                             reference: el.reference};
-                })));
+                }));
             });
         },
         updater: function(json_item) {
@@ -110,6 +121,7 @@ function initialize() {
 
             service.getDetails({reference:item.reference}, function(place, status) {
                 var values = {};
+                values['cat_icon'] = place.icon;
                 values['address'] = place.formatted_address;
                 values['phone_number'] = place.formatted_phone_number;
                 values['lat'] = place.geometry.location.lat();
@@ -118,6 +130,7 @@ function initialize() {
                 values['photos'] = _.map(place.photos, function(photo) {
                     return {width:photo.width, height:photo.height, url:photo.getUrl({maxWidth:250})}
                 });
+                $form[0].reset();
                 $form.values($.extend({}, place, values));
 
                 place_changed(map, marker, $form.values());

@@ -145,9 +145,13 @@ $.fn.typeahead.defaults['highlighter'] = (json_item) ->
     item = JSON.parse(json_item)
 
     query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
-    return item['name'].replace(new RegExp('(' + query + ')', 'ig'), ($1, match) ->
+    result = item['name'].replace(new RegExp('(' + query + ')', 'ig'), ($1, match) ->
         return '<strong>' + match + '</strong>'
     )
+
+    if (item.icon)
+        result = '<img style="max-height:18px; max-width:18px;" src="' + item.icon + '"/> ' + result
+    return result
 
 $.fn.typeahead.defaults['updater'] = (json_item) ->
     item = JSON.parse(json_item)
