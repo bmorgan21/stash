@@ -60,6 +60,13 @@ exports.configure = (app, skin) ->
         res.locals.helpers = require('./helpers')
         res.locals.user = req.user
 
+        req.coords = null
+        if req.cookies.coords
+            try
+                req.coords = JSON.parse(req.cookies.coords)
+            catch
+                pass
+
         next()
     )
     app.use((req, res, next) -> #monkey patch express to properly handle json flashes and redirects

@@ -26,51 +26,42 @@ class LocationController extends BaseController
         lng = coords.lng
         lat = coords.lat
 
-        models.Location.find({user:user, loc: {$near: [lng, lat], $maxDistance:5}}, # just do distance of 5 in the mathematical world
+        miles = (num) -> num / 3959
+
+        #query already returns the closest result first, results sorted by distance
+        models.Location.find({user:user, loc: {$nearSphere: [lng, lat], $maxDistance: miles(25) }}, # using Miles
             (err, locations) ->
                 if (not err)
                     locations = _.map(locations, (el) ->
-                        obj = el.toJSON({virtuals:true})
-                        obj.distance = lib.distance.getDistanceAsMiles({lat:lat, lng:lng}, el.coords)
+                        obj = el.toJSON() #Location is setup to include virtuals in toJSON
+                        obj.distance = lib.distance.getDistanceAsMiles(coords, el.coords)
                         return obj
                     )
 
-                    locations = _.filter(locations, (el) ->
-                        return el.distance < 25
-                    )
-
-                    locations = _.sortBy(locations, (el) ->
-                        return el.distance
-                    )
                 cb(err, locations)
             )
 
     index: (req, res, next) =>
-        if (req.cookies.coords)
-            coords = JSON.parse(req.cookies.coords)
-            @do_search(coords, req.user, (err, locations) =>
-                if (err)
-                    next(err)
-                else
-                    res.render('index.html', {locations:locations, icon_filters:@icon_filters(locations)})
-            )
+        process = (err, locations) =>
+            if (err)
+                next(err)
+            else
+                res.render('index.html', {locations:locations, icon_filters:@icon_filters(locations)})
+
+        if (req.coords)
+            @do_search(req.coords, req.user, process)
         else
-            models.Location.find({user:req.user}, (err, locations) =>
-                if (err)
-                    next(err)
-                else
-                    res.render('index.html', {locations:locations, icon_filters:@icon_filters(locations)})
-            )
+            models.Location.find({user:req.user}, process)
+
     view: (req, res, next) =>
         models.Location.findOne({_id:req.params.id, user:req.user}, (err, location) ->
             if (err)
                 next(err)
             else
-                coords = if req.cookies.coords then JSON.parse(req.cookies.coords) else null
                 res.render('location.view.html', {
                     location:location,
-                    coords:coords,
-                    distance: if coords then lib.distance.getDistanceAsMiles(coords, location.coords) else null
+                    coords: req.coords,
+                    distance: if req.coords then lib.distance.getDistanceAsMiles(req.coords, location.coords) else null
                 })
             )
 
@@ -101,8 +92,7 @@ class LocationController extends BaseController
                 vars = {}
                 if (location)
                     vars = location.toObject()
-                    vars.lng = vars.loc[0]
-                    vars.lat = vars.loc[1]
+                    [vars.lng, vars.lat] = vars.loc
                 res.render('location.create.html', {vars: vars, exists:req.params.id})
             )
 

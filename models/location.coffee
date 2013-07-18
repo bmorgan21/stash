@@ -1,4 +1,5 @@
 mongoose = require('mongoose')
+mongoose = require('mongoose')
 Schema = mongoose.Schema
 
 schema = Schema({
@@ -9,7 +10,7 @@ schema = Schema({
     phone_number: String,
     international_phone_number:String,
     loc: {
-        index: {type:'2d'},
+        index: {type:'2dsphere'},
         type: [Number]
         },
     icon: String,
@@ -44,5 +45,10 @@ schema.virtual("coords")
         this.loc[1] = map.lat
         return this.loc
     )
+schema.set('toJSON',
+    virtuals: true
+    getters: false
+    minimize: false
+)
 
 exports.schema = schema
