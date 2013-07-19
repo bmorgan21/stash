@@ -13,6 +13,7 @@
     "connect-flash": "*",
     "connect-mongo": "*",
     "async": "*",
+    "coffee-script": "*",
     "connect-coffee-script": "*",
     "underscore": "~1.4.4",
     "mongoose": "*",
